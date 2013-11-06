@@ -1,11 +1,11 @@
 
-Problem Statement
+/*Problem Statement
     
 You work for an electric company, and the power goes out in a rather large apartment complex with a lot of irate tenants. You isolate the problem to a network of sewers underneath the complex with a step-up transformer at every junction in the maze of ducts. Before the power can be restored, every transformer must be checked for proper operation and fixed if necessary. To make things worse, the sewer ducts are arranged as a tree with the root of the tree at the entrance to the network of sewers. This means that in order to get from one transformer to the next, there will be a lot of backtracking through the long and claustrophobic ducts because there are no shortcuts between junctions. Furthermore, it's a Sunday; you only have one available technician on duty to search the sewer network for the bad transformers. Your supervisor wants to know how quickly you can get the power back on; he's so impatient that he wants the power back on the moment the technician okays the last transformer, without even waiting for the technician to exit the sewers first.
 You will be given three vector <int>'s: fromJunction, toJunction, and ductLength that represents each sewer duct. Duct i starts at junction (fromJunction[i]) and leads to junction (toJunction[i]). ductlength[i] represents the amount of minutes it takes for the technician to traverse the duct connecting fromJunction[i] and toJunction[i]. Consider the amount of time it takes for your technician to check/repair the transformer to be instantaneous. Your technician will start at junction 0 which is the root of the sewer system. Your goal is to calculate the minimum number of minutes it will take for your technician to check all of the transformers. You will return an int that represents this minimum number of minutes.
 Definition
     
-/*Class:
+Class:
 PowerOutage
 Method:
 estimateTimeOut
@@ -82,10 +82,140 @@ Returns: 2500
 
 This problem statement is the exclusive and proprietary property of TopCoder, Inc. Any unauthorized use or reproduction of this information without the prior written consent of TopCoder, Inc. is strictly prohibited. (c)2003, TopCoder, Inc. All rights reserved.
 */
+#include <vector>
+#include "stdio.h"
+using namespace std;
 class PowerOutage
 {
 public:
+				int pathLength[50];
+				vector <int> fromJunction;
+				vector<int> toJunction; 
+				vector<int> ductLength;
+				int branch[50][50];
+				int branchCount[50];
+				int branchPath[50][50];
 	int estimateTimeOut(vector <int> fromJunction, vector<int> toJunction, vector<int> ductLength)
 	{
+					this->fromJunction = fromJunction;
+					this->toJunction = toJunction;
+					this->ductLength = ductLength;
+
+				for (int i = 0; i < fromJunction.size(); i++)
+				{
+								branch[fromJunction[i]][branchCount[fromJunction[i]]] = toJunction[i];
+								branchPath[fromJunction[i]][branchCount[fromJunction[i]]] =i ;
+								branchCount[fromJunction[i]]++;
+				
+				}
+				for (int i = 0; i < 50; i++)
+								pathLength[i] = 0;
+
+				pathLength[0] = getPathLength(0);
+
+				for (int i = 0; i < 3; i++)
+				{
+								printf("%d\n", pathLength[i]);
+				}
+				return gettraverseLength(0);
+
+
+	}
+	int getPathLength(int from)
+	{
+					int length = 0;
+					
+				for (int i = 0; i < fromJunction.size(); i++)
+				{
+							if(fromJunction[i]== from)	
+							{
+											pathLength[toJunction[i]] = getPathLength(toJunction[i]);
+											length += pathLength[toJunction[i]] + ductLength[i]; 
+							}
+				}
+				return length;
+
+				
+	}
+  int gettraverseLength(int from)
+	{
+					if (branchCount[from] == 0)
+					{
+									return 0;
+					}
+
+					if (branchCount[from] == 1)
+					{
+									return gettraverseLength(branch[from][0]) + branchPath[from][branch[from][0]]; 
+					}
+					int length = 0;
+					int maxPath = pathLength[branch[from][0]] + branchPath[from][branch[from][0]];
+					int maxIndex = 0;
+					for (int i = 1; i < branchCount[from]; i++)
+					{
+								int l = pathLength[branch[from][i]] + branchPath[from][branch[from][i]];
+								if (l > maxPath)
+								{
+												length += 2 * maxPath;
+												maxIndex = i;
+								}
+								else
+								{
+												length += 2 * l;
+								}
+
+					}
+					length += gettraverseLength(branch[from][maxIndex]) + branchPath[from][branch[from][maxIndex]];
+					return length;
 	}
 };
+
+int main(int argc, char** argv)
+{
+				int from[] = {0,1,0};
+				int to[] = {1,2,3};
+				int path[] = {10,10,10}	;
+				vector<int> fromv(from,  from + sizeof(from) / sizeof(int));
+				vector<int> tov(to,  to + sizeof(to) / sizeof(int));
+				vector<int> pathv(path,  path + sizeof(path) / sizeof(int));
+				PowerOutage *outage = new PowerOutage();
+				int outageTime = outage->estimateTimeOut(fromv, tov, pathv);
+				printf("%d\n", outageTime);
+				
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
