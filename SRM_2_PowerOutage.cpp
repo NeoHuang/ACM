@@ -85,98 +85,68 @@ This problem statement is the exclusive and proprietary property of TopCoder, In
 #include <vector>
 #include "stdio.h"
 using namespace std;
+class Path
+{
+  public:
+    int fromNode;
+    int toNode;
+    int Length;
+};
 class PowerOutage
 {
 public:
-				int pathLength[50];
-				vector <int> fromJunction;
-				vector<int> toJunction; 
-				vector<int> ductLength;
-				int branch[50][50];
-				int branchCount[50];
-				int branchPath[50][50];
-	int estimateTimeOut(vector <int> fromJunction, vector<int> toJunction, vector<int> ductLength)
+  vector<int> fromJunction;
+  vector<int> toJunction;
+  vector<int> ductLength;
+  int branchCount[50];
+  Path branch[50][50];
+int estimateTimeOut(vector <int> fromJunction, vector<int> toJunction, vector<int> ductLength)
 	{
 					this->fromJunction = fromJunction;
 					this->toJunction = toJunction;
 					this->ductLength = ductLength;
+          int totalLength = 0; 
+          for (int i = 0; i < fromJunction.size(); i++)
+          {
+            totalLength += ductLength[i];
+            branch[fromJunction[i]][branchCount[fromJunction[i]]].toNode = toJunction[i];
+            branch[fromJunction[i]][branchCount[fromJunction[i]]].Length = ductLength[i]; 
+            branchCount[fromJunction[i]]++;
+          }
+          int length = findLongestPath(0);
+          return totalLength * 2 - length;
 
-				for (int i = 0; i < fromJunction.size(); i++)
-				{
-								branch[fromJunction[i]][branchCount[fromJunction[i]]] = toJunction[i];
-								branchPath[fromJunction[i]][branchCount[fromJunction[i]]] =i ;
-								branchCount[fromJunction[i]]++;
-				
-				}
-				for (int i = 0; i < 50; i++)
-								pathLength[i] = 0;
+  }	
+int findLongestPath(int node)
+{
+  int length = 0;
+  for (int i = 0; i < branchCount[node]; i++)
+  {
+    int l = findLongestPath(branch[node][i].toNode) + branch[node][i].Length; 
+    if (l > length)
+    {
+      length = l;
+    }
 
-				pathLength[0] = getPathLength(0);
+  }
+  return length;
 
-				for (int i = 0; i < 3; i++)
-				{
-								printf("%d\n", pathLength[i]);
-				}
-				return gettraverseLength(0);
-
-
-	}
-	int getPathLength(int from)
-	{
-					int length = 0;
-					
-				for (int i = 0; i < fromJunction.size(); i++)
-				{
-							if(fromJunction[i]== from)	
-							{
-											pathLength[toJunction[i]] = getPathLength(toJunction[i]);
-											length += pathLength[toJunction[i]] + ductLength[i]; 
-							}
-				}
-				return length;
-
-				
-	}
-  int gettraverseLength(int from)
-	{
-					if (branchCount[from] == 0)
-					{
-									return 0;
-					}
-
-					if (branchCount[from] == 1)
-					{
-									return gettraverseLength(branch[from][0]) + ductLength[branchPath[from][branch[from][0]]]; 
-					}
-					int length = 0;
-					int maxPath = pathLength[branch[from][0]] + ductLength[branchPath[from][branch[from][0]]];
-					int maxIndex = 0;
-					for (int i = 1; i < branchCount[from]; i++)
-					{
-								int l = pathLength[branch[from][i]] + ductLength[branchPath[from][branch[from][0]]];
-								if (l > maxPath)
-								{
-												length += 2 * maxPath;
-												maxIndex = i;
-								}
-								else
-								{
-												length += 2 * l;
-								}
-
-					}
-					length += gettraverseLength(branch[from][maxIndex]) + ductLength[branchPath[from][branch[from][maxIndex]]];
-					return length;
-	}
+}
 };
-
 int main(int argc, char** argv)
 {
-				int from[] ={0,0,0,1,4,4,6,7,7,7,20}
+		/*int from[] ={0,0,0,1,4,4,6,7,7,7,20}
 ;
 				int to[] = {1,3,4,2,5,6,7,20,9,10,31};
-				int path[] = {10,10,100,10,5,1,1,100,1,1,5};
+				int path[] = {10,10,100,10,5,1,1,100,1,1,5};*/
 	;
+ /* int from[] = {0,0,0,1,4};
+int to[] = {1,3,4,2,5};
+int path[] = {10,10,100,10,5};*/
+    int from[] = {0, 0, 1, 1};
+    int to[] = {1, 2, 3, 4}; 
+    int path[] = {5, 9, 3, 2};
+
 				vector<int> fromv(from,  from + sizeof(from) / sizeof(int));
 				vector<int> tov(to,  to + sizeof(to) / sizeof(int));
 				vector<int> pathv(path,  path + sizeof(path) / sizeof(int));
