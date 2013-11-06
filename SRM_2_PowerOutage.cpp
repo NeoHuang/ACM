@@ -146,14 +146,14 @@ public:
 
 					if (branchCount[from] == 1)
 					{
-									return gettraverseLength(branch[from][0]) + branchPath[from][branch[from][0]]; 
+									return gettraverseLength(branch[from][0]) + ductLength[branchPath[from][branch[from][0]]]; 
 					}
 					int length = 0;
-					int maxPath = pathLength[branch[from][0]] + branchPath[from][branch[from][0]];
+					int maxPath = pathLength[branch[from][0]] + ductLength[branchPath[from][branch[from][0]]];
 					int maxIndex = 0;
 					for (int i = 1; i < branchCount[from]; i++)
 					{
-								int l = pathLength[branch[from][i]] + branchPath[from][branch[from][i]];
+								int l = pathLength[branch[from][i]] + ductLength[branchPath[from][branch[from][0]]];
 								if (l > maxPath)
 								{
 												length += 2 * maxPath;
@@ -165,16 +165,18 @@ public:
 								}
 
 					}
-					length += gettraverseLength(branch[from][maxIndex]) + branchPath[from][branch[from][maxIndex]];
+					length += gettraverseLength(branch[from][maxIndex]) + ductLength[branchPath[from][branch[from][maxIndex]]];
 					return length;
 	}
 };
 
 int main(int argc, char** argv)
 {
-				int from[] = {0,1,0};
-				int to[] = {1,2,3};
-				int path[] = {10,10,10}	;
+				int from[] ={0,0,0,1,4,4,6,7,7,7,20}
+;
+				int to[] = {1,3,4,2,5,6,7,20,9,10,31};
+				int path[] = {10,10,100,10,5,1,1,100,1,1,5};
+	;
 				vector<int> fromv(from,  from + sizeof(from) / sizeof(int));
 				vector<int> tov(to,  to + sizeof(to) / sizeof(int));
 				vector<int> pathv(path,  path + sizeof(path) / sizeof(int));
