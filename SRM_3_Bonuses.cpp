@@ -56,11 +56,13 @@ class Bonuses
     vector<int> getDivision(vector<int> points)
     {
       vector<int> result;
+      vector<int> order;
       int total = 0;
       for (int i = 0; i < points.size(); i++)
       {
         result.push_back(0);
         total += points[i];
+        order.push_back(i);
       }
       int remains = 100;
       for (int i = 0; i < points.size(); i++)
@@ -70,12 +72,42 @@ class Bonuses
         
       
       }
-        printf("%d\n",remains); 
+        
+      vector<int> orderedPoints = points;
+      for (int i = orderedPoints.size() - 1; i >= 0; i--)
+      {
+        for (int j = 0; j <= i - 1; j++)
+        {
+          if (orderedPoints[j] < orderedPoints[j+1]) 
+          {
+            int tmp = orderedPoints[j+1];
+            orderedPoints[j+1] = orderedPoints[j];
+            orderedPoints[j] = tmp;
+            tmp = order[j+1];
+            order[j+1] = order[j];
+            order[j] = tmp;
+          }
+        }
+      }
+      for (int i = 0; i < points.size(); i++)
+      {
+        printf("%d ", orderedPoints[i]);
+      }
+      for (int i = 0; i < points.size(); i++)
+      {
+        printf("%d ", order[i]);
+      }
+      for (int i = 0; i < remains; i++)
+      {
+        result[order[i]]++;
+      }
+      return result;
+
     }
 };
 int main(int argc, char** argv)
 {
-  int intarray[] ={1, 2, 3, 4, 5};
+  int intarray[] ={1, 5, 3, 4, 2};
   vector<int> input(intarray, intarray + sizeof(intarray)/sizeof(int));
   Bonuses bonus;
   bonus.getDivision(input);
